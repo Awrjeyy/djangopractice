@@ -1,9 +1,10 @@
 <h1>{{ question.question_text}}</h1>
 <ul>
-    {% for choice in questoin.choice_set.all %}
+    {% for choice in question.choice_set.all %}
         <li>
             {{ choice.choice_text}} -- {{choice.votes}} vote{{ choice.vote|pluralize}}
         </li>
     {% endfor %}
 </ul>
-<a href="{% url 'polls:detail' question.id %}">Vote again?</a>
+<a href="{% url 'polls:vote' question.id %}">Vote again?</a>
+<a href="{% url 'polls:index' %}">Come home</a>

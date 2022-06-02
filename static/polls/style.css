@@ -1,5 +1,10 @@
+@charset "UTF-8";
 li a {
     color:green;
+}
+
+p{
+    color:purple;
 }
 
 body {
