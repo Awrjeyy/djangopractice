@@ -1,6 +1,6 @@
-@charset "UTF-8";
 li a {
-    color:green;
+    color:purple;
+    background-color: white;
 }
 
 p{
@@ -9,4 +9,7 @@ p{
 
 body {
     background: white url("images/background.gif") no-repeat;
+}
+div .siderbar{
+    background: black;
 }

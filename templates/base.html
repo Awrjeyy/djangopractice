@@ -1,0 +1,25 @@
+{% load static %}
+<html lang="en">
+<head>
+    
+    {% comment %} <link rel"stylesheet" type="text/css" href="{% static 'polls/style.css' %}"> {% endcomment %}
+    {% block head %}
+    {% endblock %}
+    <title>{% block title%}Le Django Practice Site{% endblock %}</title>
+    
+    
+</head>
+<body>
+    <div id="sidebar">
+        {% block sidebar %}
+        <ul>
+            <li><a href="/polls/">Home</a></li>
+        </ul>
+        {% endblock %}
+    </div>
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+
+</html>

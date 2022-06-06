@@ -10,44 +10,54 @@ from django.views.generic.base import TemplateView, View
 
 from django.http import Http404
 from .models import Choice, Question
+from . import forms
 
 # Create your views here.
 
 class IndexView(TemplateView):
-    template_name = 'index.html'
-    context_object_name = 'latest_question_list'
+    template_name = 'polls/index.html'
 
     def get(self, request):
+        #displays the latest 5 questions
         latest_question_list = Question.objects.filter(
             pub_date__lte=timezone.now()
         ).order_by('-pub_date')[:5]
         context = {'latest_question_list': latest_question_list}
-        return render(request, 'index.html', context)
+        return render(request, 'polls/index.html', context)
 
 class DetailView(TemplateView):
     model = Question
-    template_name = 'detail.html'
-
+    template_name = 'polls/detail.html'
+    
     def get(self, request, pk):
-        questions = Question.objects.filter(pub_date__lte=timezone.now())
-        return render(request, 'detail.html', {'questions' : questions})
+        question = get_object_or_404(Question, pk=pk)
+        form = forms.form(pk)
+        context = { 
+            'question' : question,
+            'form' : form,
+
+        }
+        # import pdb; pdb.set_trace() <-- debug technique
+        print("Hello this is " + str(pk))
+        return render(request, 'polls/detail.html', context)
 
 class ResultsView(TemplateView):
-    model = Question
-    template_name = 'results.html'
+    template_name = 'polls/results.html'
 
     def get(self, request, pk):
         question = get_object_or_404(Question, pk=pk)
-        return render(request, 'results.html', {'question': question})
+        return render(request, 'polls/results.html', {'question': question})
 
 
-    
+
 def vote(request, question_id):
-    question = get_object_or_404(Question, pk= question_id)
+    print(str(question_id))
+    question = get_object_or_404(Question, pk = question_id)
+    # import pdb; pdb.set_trace()
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except(KeyError, Choice.DoesNotExist):
-        return render(request, 'detail.html', {
+        return render(request, 'polls/detail.html', {
             'question' : question,
             'error_message' : "You didn't select a choice.",
         })
@@ -56,8 +66,36 @@ def vote(request, question_id):
         selected_choice.save()
         return HttpResponseRedirect(reverse('polls:results', args=(question_id,)))
 
+class FormView(TemplateView):
+    template_name = "polls/form.html"
+    
+    def get(self, request):
+        form = forms()
+        return render(request, 'polls/form.html',{'form': form})
+    
+    def post(self, request):
+        form = forms(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect('/polls/')
+        else:
+            form = forms()
+        return render(request, 'polls/form.html', {'form': form})
 
-
+#Code below is to switch for testing
+# class FormView(TemplateView):
+#     template_name = "polls/form.html"
+    
+#     def get(self, request):
+#         form = forms.DetailForm()
+#         return render(request, 'polls/form.html',{'form': form})
+    
+#     def post(self, request):
+#         form = forms.DetailForm(request.POST)
+#         if form.is_valid():
+#             return HttpResponseRedirect('/polls/')
+#         else:
+#             form = forms.DetailForm()
+#         return render(request, 'polls/form.html', {'form': form})
 
 #OLD CODE
 # class IndexView(generic.ListView):
